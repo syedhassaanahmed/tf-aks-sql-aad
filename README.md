@@ -2,7 +2,7 @@
 This Terraform template enables authentication to Azure SQL Database using [AAD Pod Identity](https://github.com/Azure/aad-pod-identity) from an AKS Cluster. The template is loosely based on [this document](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-connect-msi) with the following differences;
 
 - We use [PowerShell sqlserver module](https://docs.microsoft.com/en-us/powershell/module/sqlserver/invoke-sqlcmd?view=sqlserver-ps) instead of [sqlcmd utility](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver15). When applying the template from an Azure DevOps pipeline, PowerShell already exists on all agents.
-- We set the Service Principal under which Terraform is running, as the Azure AD Admin for SQL Server.
+- We set the Service Principal under which Terraform is running, as the [Azure AD Admin for SQL Server](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-aad-authentication-configure?tabs=azure-powershell#provision-an-azure-active-directory-administrator-for-your-managed-instance).
 - When granting database roles to the managed identity, we create the external user via following T-SQL statement;
 ```sql
 CREATE USER [<identity-name>] WITH default_schema=[dbo], SID=[<identity-sid>], TYPE=E;
@@ -15,7 +15,7 @@ When trying to execute non-interactively, the later T-SQL statement will fail wi
 ```
 Principal 'xyz' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.
 ```
-Many thanks to my colleague [Noel Bundick](https://www.noelbundick.com/) for pointing me out to [this solution](https://github.com/microsoft/data-contest-toolkit/blob/noel/azure-infra/deploy/bootstrap/bootstrap.ps1) based on the [pseudo-documented SID hack](https://stackoverflow.com/questions/53001874/cant-create-azure-sql-database-users-mapped-to-azure-ad-identities-using-servic/56150547#56150547).
+Many thanks to my colleague [Noel Bundick](https://www.noelbundick.com/) for pointing out to [this solution](https://github.com/microsoft/data-contest-toolkit/blob/noel/azure-infra/deploy/bootstrap/bootstrap.ps1) based on the [pseudo-documented SID hack](https://stackoverflow.com/questions/53001874/cant-create-azure-sql-database-users-mapped-to-azure-ad-identities-using-servic/56150547#56150547).
 
 ## Requirements
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
@@ -37,7 +37,7 @@ export aad_pod_id_binding_selector="aad-pod-id-binding-selector"
 export aks_cluster_name="aks-xxxxxx"
 export rg_name="rg-xxxxxx"
 export sql_db_name="sqldb-test"
-export sql_server_fqdn="sql-"
+export sql_server_fqdn="sql-xxxxxx"
 ```
 
 Then;
