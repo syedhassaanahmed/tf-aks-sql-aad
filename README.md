@@ -11,9 +11,9 @@ instead of
 ```sql
 CREATE USER [<identity-name>] FROM EXTERNAL PROVIDER;
 ```
-When trying to execute non-interactively, the later T-SQL statement will fail with the following error;
+The later T-SQL statement requires `[<identity-name>]` to be a user principal and if a service principal/managed identity is specified, it will fail with the following error;
 ```
-Principal 'xyz' could not be created. Only connections established with Active Directory accounts can create other Active Directory users.
+Principal 'abc' could not be found at this time. Please try again later.
 ```
 Many thanks to my colleague [Noel Bundick](https://www.noelbundick.com/) for pointing out to [this solution](https://github.com/microsoft/data-contest-toolkit/blob/noel/azure-infra/deploy/bootstrap/bootstrap.ps1) based on the [pseudo-documented SID hack](https://stackoverflow.com/questions/53001874/cant-create-azure-sql-database-users-mapped-to-azure-ad-identities-using-servic/56150547#56150547).
 
