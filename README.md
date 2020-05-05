@@ -31,7 +31,7 @@ Many thanks to my colleague [Noel Bundick](https://www.noelbundick.com/) for poi
 - AKS Cluster
 
 ## Smoke Test
-Fill the following variables from the Terraform output;
+Once `terraform apply` has successfully completed, fill the following variables from the Terraform output;
 ```sh
 export aad_pod_id_binding_selector="aad-pod-id-binding-selector"
 export aks_cluster_name="aks-xxxxxx"
@@ -44,3 +44,5 @@ Then;
 ```
 ./smoke_test.sh
 ```
+
+The smoke test will create a test pod in the newly provisioned AKS cluster and will attempt to authenticate to the SQL DB from the pod using managed identity. Once authentication is successful it will perform CRUD operations to validate the database roles.

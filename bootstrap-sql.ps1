@@ -45,11 +45,12 @@ function Grant-AadObject {
    $sid = ConvertTo-Sid "$objectId"
    
    $grantQuery = @"
-   IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = '$objectName')
+   IF EXISTS (SELECT name FROM sys.database_principals WHERE name = '$objectName')
    BEGIN
-      CREATE USER [$objectName] WITH default_schema=[dbo], SID=$sid, TYPE=$objectType;
+      DROP USER [$objectName];
    END
    
+   CREATE USER [$objectName] WITH default_schema=[dbo], SID=$sid, TYPE=$objectType;
    ALTER ROLE db_datareader ADD MEMBER [$objectName];
    ALTER ROLE db_datawriter ADD MEMBER [$objectName];
    ALTER ROLE db_ddladmin ADD MEMBER [$objectName];
