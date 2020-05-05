@@ -45,4 +45,4 @@ Then;
 ./smoke_test.sh
 ```
 
-The smoke test will create a test pod in the newly provisioned AKS cluster and will attempt to authenticate to the SQL DB from the pod using managed identity. Once authentication is successful it will perform CRUD operations to validate the database roles.
+The smoke test will create a test pod in the newly provisioned AKS cluster and will attempt to authenticate to the SQL DB from the pod using managed identity. Once authentication is successful it will perform DDL and CRUD operations to validate the database roles.
