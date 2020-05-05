@@ -1,7 +1,7 @@
 # tf-aks-sql-aad
 This Terraform template enables authentication to Azure SQL Database using [AAD Pod Identity](https://github.com/Azure/aad-pod-identity) from an AKS Cluster. The template is loosely based on [this document](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-connect-msi) with the following differences;
 
-- We use [PowerShell sqlserver module](https://docs.microsoft.com/en-us/powershell/module/sqlserver/invoke-sqlcmd?view=sqlserver-ps) instead of [sqlcmd utility](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver15). When applying the template from an Azure DevOps pipeline, PowerShell already exists on all agents.
+- We use [PowerShell sqlserver module](https://docs.microsoft.com/en-us/powershell/module/sqlserver/invoke-sqlcmd?view=sqlserver-ps) instead of [sqlcmd utility](https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver15). When applying the template from an Azure DevOps pipeline, PowerShell already exists on all [hosted agents](https://github.com/actions/virtual-environments/blob/master/images/linux/Ubuntu1804-README.md).
 - We set the Service Principal under which Terraform is running, as the [Azure AD Admin for SQL Server](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-aad-authentication-configure?tabs=azure-powershell#provision-an-azure-active-directory-administrator-for-your-managed-instance).
 - When granting database roles to the managed identity, we create the external user via following T-SQL statement;
 ```sql
