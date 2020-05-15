@@ -1,0 +1,27 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches:
+    - master
+    paths-ignore:
+    - '**.md'
+  pull_request:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Validate
+      run: terraform validate
