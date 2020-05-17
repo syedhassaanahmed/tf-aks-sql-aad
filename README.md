@@ -41,10 +41,12 @@ export rg_name="rg-xxxxxx"
 export sql_db_name="sqldb-test"
 export sql_server_fqdn="sql-xxxxxx"
 ```
-
+Alternatively, you can execute the following;
+```sh
+eval $(terraform output | sed 's/^/export /; s/ = /="/g; s/$/"/')
+```
 Then;
 ```
 ./smoke_test.sh
 ```
-
 The smoke test will create a test pod in the newly provisioned AKS cluster and will attempt to authenticate to the SQL DB from the pod using managed identity. Once authentication is successful it will perform DDL and CRUD operations to validate the database roles.

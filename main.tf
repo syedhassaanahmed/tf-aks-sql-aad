@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version = "=2.8.0"
+  version = "=2.10.0"
   features {}
 }
 
@@ -185,16 +185,19 @@ resource "null_resource" "sql_bootstrap" {
   }
   provisioner "local-exec" {
     interpreter = ["pwsh", "-Command"]
-    command     = <<EOF
+    environment = {
+      # Use env var to pass connection string otherwise terraform cli will print it to stdout
+      SQL_SA_CONNECTION_STRING = "Server=tcp:${azurerm_sql_server.sql.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_sql_database.sql.name};Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;User ID=${azurerm_sql_server.sql.administrator_login};Password=${azurerm_sql_server.sql.administrator_login_password};"
+    }
+    command = <<EOF
       .'${path.module}/bootstrap-sql.ps1' `
         -identityName "${azurerm_user_assigned_identity.mi.name}" `
         -identityClientId "${azurerm_user_assigned_identity.mi.client_id}" `
-        -sqlSaConnectionString 'Server=tcp:${azurerm_sql_server.sql.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_sql_database.sql.name};Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;User ID=${azurerm_sql_server.sql.administrator_login};Password=${azurerm_sql_server.sql.administrator_login_password};'
+        -sqlSaConnectionString "$Env:SQL_SA_CONNECTION_STRING"
 EOF
   }
   depends_on = [
     azurerm_sql_active_directory_administrator.sql,
-    azurerm_sql_firewall_rule.my_ip,
-    azurerm_sql_database.sql
+    azurerm_sql_firewall_rule.my_ip
   ]
 }
