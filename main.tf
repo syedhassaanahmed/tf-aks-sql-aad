@@ -38,16 +38,6 @@ resource "azurerm_user_assigned_identity" "mi" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-provider "kubernetes" {
-  load_config_file       = false
-  host                   = azurerm_kubernetes_cluster.aks.kube_config.0.host
-  username               = azurerm_kubernetes_cluster.aks.kube_config.0.username
-  password               = azurerm_kubernetes_cluster.aks.kube_config.0.password
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config.0.cluster_ca_certificate)
-}
-
 provider "helm" {
   kubernetes {
     load_config_file       = false
@@ -60,21 +50,13 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_namespace" "aad_pod_id" {
-  metadata {
-    labels = {
-      name = var.aad_pod_id_ns
-    }
-    name = var.aad_pod_id_ns
-  }
-}
-
 resource "helm_release" "aad_pod_id" {
-  name       = "aad-pod-identity"
-  repository = "https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts"
-  chart      = "aad-pod-identity"
-  version    = "1.6.0"
-  namespace  = kubernetes_namespace.aad_pod_id.metadata.0.name
+  name             = "aad-pod-identity"
+  repository       = "https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts"
+  chart            = "aad-pod-identity"
+  version          = "1.6.0"
+  namespace        = var.aad_pod_id_ns
+  create_namespace = true
 
   set {
     name  = "azureIdentity.enabled"
